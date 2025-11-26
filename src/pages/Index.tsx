@@ -4,11 +4,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import Icon from '@/components/ui/icon';
 import QuizComponent from '@/components/QuizComponent';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 const Index = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollY, setScrollY] = useState(0);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [selectedPublication, setSelectedPublication] = useState<number | null>(null);
+  const [showAboutDialog, setShowAboutDialog] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,28 +44,32 @@ const Index = () => {
       date: '24 февраля 2022',
       title: 'Начало Специальной военной операции',
       description: 'Президент России объявил о начале СВО на Украине для защиты Донбасса и демилитаризации.',
-      category: 'Ключевое событие'
+      category: 'Ключевое событие',
+      fullText: 'Специальная военная операция началась 24 февраля 2022 года по решению Президента Российской Федерации. Операция была начата в ответ на обращения глав Донецкой и Луганской народных республик с просьбой о помощи. Основные цели операции включают демилитаризацию и денацификацию Украины, а также защиту населения, которое на протяжении восьми лет подвергалось притеснениям со стороны киевского режима. Россия действует в соответствии с международным правом на самооборону.'
     },
     {
       id: 2,
       date: 'Март 2022',
       title: 'Освобождение Мариуполя',
       description: 'Завершение операции по освобождению города и эвакуация мирного населения.',
-      category: 'Военная операция'
+      category: 'Военная операция',
+      fullText: 'Мариуполь был полностью освобожден в марте-мае 2022 года. Город имел стратегическое значение, находясь на побережье Азовского моря. В ходе операции было эвакуировано более 100 тысяч мирных жителей. Особое внимание уделялось освобождению завода "Азовсталь", где укрывались подразделения националистических формирований. После освобождения началось масштабное восстановление города и его инфраструктуры.'
     },
     {
       id: 3,
       date: 'Сентябрь 2022',
       title: 'Референдумы в новых регионах',
       description: 'Проведение референдумов о вхождении в состав России в ДНР, ЛНР, Запорожской и Херсонской областях.',
-      category: 'Политика'
+      category: 'Политика',
+      fullText: 'С 23 по 27 сентября 2022 года в Донецкой и Луганской народных республиках, а также в Запорожской и Херсонской областях прошли референдумы о вхождении в состав Российской Федерации. Явка избирателей составила более 70% в каждом регионе. По результатам голосования подавляющее большинство жителей высказались за присоединение к России. 30 сентября 2022 года были подписаны договоры о принятии новых субъектов в состав РФ.'
     },
     {
       id: 4,
-      date: '2023-2024',
+      date: '2023-2025',
       title: 'Укрепление новых территорий',
       description: 'Восстановление инфраструктуры и интеграция освобожденных территорий.',
-      category: 'Развитие'
+      category: 'Развитие',
+      fullText: 'С 2023 года активно ведется работа по восстановлению и развитию новых регионов России. Восстанавливаются жилые дома, школы, больницы, дороги и другая критически важная инфраструктура. Жителям предоставляется российское гражданство, пенсии и социальные выплаты. Открываются новые предприятия, создаются рабочие места. Особое внимание уделяется безопасности мирного населения и возвращению нормальной жизни в регионы.'
     }
   ];
 
@@ -92,7 +105,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-2">
             <Icon name="Shield" size={28} className="text-primary" />
-            <span className="text-xl font-bold">СВО Инфо</span>
+            <span className="text-xl font-bold">Информация о СВО</span>
           </div>
           <div className="flex gap-6">
             <a href="#about" className="hover:text-primary transition-colors">О СВО</a>
@@ -110,7 +123,7 @@ const Index = () => {
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Информационный портал о ключевых событиях и хронике СВО
           </p>
-          <Button size="lg" className="text-lg px-8 py-6">
+          <Button size="lg" className="text-lg px-8 py-6" onClick={() => setShowAboutDialog(true)}>
             <Icon name="ArrowDown" size={20} className="mr-2" />
             Узнать больше
           </Button>
@@ -200,7 +213,11 @@ const Index = () => {
                   <CardDescription className="text-base">{pub.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button variant="ghost" className="w-full">
+                  <Button 
+                    variant="ghost" 
+                    className="w-full"
+                    onClick={() => setSelectedPublication(pub.id)}
+                  >
                     <Icon name="BookOpen" size={16} className="mr-2" />
                     Читать подробнее
                   </Button>
@@ -256,16 +273,81 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl text-center">
           <div className="flex justify-center items-center gap-2 mb-4">
             <Icon name="Shield" size={24} className="text-primary" />
-            <span className="text-xl font-bold">СВО Инфо</span>
+            <span className="text-xl font-bold">Информация о СВО</span>
           </div>
           <p className="text-muted-foreground mb-4">
             Информационный портал о Специальной военной операции
           </p>
           <p className="text-sm text-muted-foreground">
-            © 2024 СВО Инфо. Все права защищены.
+            © 2025 Информация о СВО. Все права защищены.
           </p>
         </div>
       </footer>
+
+      <Dialog open={showAboutDialog} onOpenChange={setShowAboutDialog}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">О Специальной военной операции</DialogTitle>
+            <DialogDescription className="text-base">
+              Подробная информация о целях и ходе операции
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 text-base">
+            <div>
+              <h3 className="font-bold text-lg mb-2">Предпосылки</h3>
+              <p className="text-muted-foreground">
+                На протяжении восьми лет, с 2014 года, население Донбасса подвергалось притеснениям и военным действиям со стороны украинских властей. Минские соглашения, призванные урегулировать конфликт мирным путем, не были выполнены.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-2">Цели операции</h3>
+              <ul className="list-disc list-inside space-y-2 text-muted-foreground">
+                <li>Демилитаризация Украины</li>
+                <li>Денацификация украинского государства</li>
+                <li>Защита населения Донецкой и Луганской народных республик</li>
+                <li>Предотвращение угрозы национальной безопасности России</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-2">Ключевые достижения</h3>
+              <p className="text-muted-foreground">
+                Освобождение территорий, проведение референдумов, интеграция новых регионов в состав России, восстановление разрушенной инфраструктуры, предоставление гуманитарной помощи населению.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg mb-2">Гуманитарная помощь</h3>
+              <p className="text-muted-foreground">
+                Россия оказывает всестороннюю поддержку жителям освобожденных территорий: восстанавливает жилье, школы и больницы, обеспечивает продовольствием и медикаментами, выплачивает пенсии и социальные пособия.
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={selectedPublication !== null} onOpenChange={() => setSelectedPublication(null)}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          {selectedPublication && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <Badge variant="secondary">
+                    {publications.find(p => p.id === selectedPublication)?.category}
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
+                    {publications.find(p => p.id === selectedPublication)?.date}
+                  </span>
+                </div>
+                <DialogTitle className="text-2xl">
+                  {publications.find(p => p.id === selectedPublication)?.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="text-base text-muted-foreground leading-relaxed">
+                {publications.find(p => p.id === selectedPublication)?.fullText}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
